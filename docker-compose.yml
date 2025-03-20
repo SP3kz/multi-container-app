@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  web:
+    build: 
+      context: ./app
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./app:/usr/src/app
+      - /usr/src/app/node_modules
+    # Enable hot-reloading for development
+    command: npm run dev
+    # Restart on file changes
+    restart: unless-stopped 

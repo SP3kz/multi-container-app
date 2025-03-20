@@ -1,41 +1,39 @@
-const mongoose = require('mongoose');
-const bodyParse = require('body-parser');
-const livereload = require('livereload');
-const connectLiveReload = require('connect-livereload');
-const app = require('express')();
-const moment = require('moment');
+const express = require('express');
+const app = express();
+const port = process.env.PORT || 3000;
 
-// Live Reload configuration
-const liveReloadServer = livereload.createServer();
-liveReloadServer.server.once("connection", () => {
-    setTimeout(() => {
-        liveReloadServer.refresh("/");
-    }, 100);
+app.get('/', (req, res) => {
+  res.send(`
+    <html>
+      <head>
+        <title>Docker Starter</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+          }
+          .container {
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 50px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1>🐳 Welcome to Docker Starter!</h1>
+          <p>Your Docker container is running successfully.</p>
+          <p>Server time: ${new Date().toLocaleString()}</p>
+        </div>
+      </body>
+    </html>
+  `);
 });
 
-// Fontend route
-const FrontRouter = require('./routes/front');
-
-// Set ejs template engine
-app.set('view engine', 'ejs');
-
-app.use(connectLiveReload())
-
-app.use(bodyParse.urlencoded({ extended: false }));
-app.locals.moment = moment;
-
-// Database connection
-const db = require('./config/keys').mongoProdURI;
-mongoose
-    .connect(db, { useNewUrlParser: true })
-    .then(() => console.log(`Mongodb Connected`))
-    .catch(error => console.log(error));
-
-
-app.use(FrontRouter);
-
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
 });
